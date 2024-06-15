@@ -1,0 +1,52 @@
+import { useState, useEffect } from "react";
+import { getUser } from "../apiRequests/apirequest";
+import UseAuth from "../hooks/UseAuth";
+
+const Users = () => {
+	const [users, setUsers] = useState<any[]>([]);
+	const { auth }: any = UseAuth();
+
+	// To make a get request to the users API with jsonwebtokens
+	useEffect(() => {
+		let isMounted = true;
+		const controller = new AbortController();
+
+		getUser(isMounted, setUsers, controller, auth);
+
+		return () => {
+			isMounted = false;
+			controller.abort();
+		};
+	}, [auth.email]);
+
+	return (
+		<div>
+			<h2>Profile Details</h2>
+			<br />
+
+			{users.length > 0 ? (
+				<ul>
+					<li>
+						Firstname: <b> {users[0].firstname} </b>
+					</li>
+					<li>
+						Lastname: <b> {users[0].lastname} </b>
+					</li>
+					<li>
+						Phone: <b> {users[0].phone} </b>
+					</li>
+					<li>
+						Email: <b> {users[0].email} </b>
+					</li>
+					<li>
+						Username: <b> {users[0].username} </b>
+					</li>
+				</ul>
+			) : (
+				<p>No user found</p>
+			)}
+		</div>
+	);
+};
+
+export default Users;
