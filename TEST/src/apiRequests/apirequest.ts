@@ -1,7 +1,8 @@
 import axios from "axios";
 
 export const apiRequest = axios.create({
-	baseURL: "http://localhost:3500",
+	// baseURL: "http://localhost:3500",
+	baseURL: "https://grearnapi.vercel.app",
 	withCredentials: true,
 });
 
