@@ -5,6 +5,7 @@ import UseAuth from "../../hooks/UseAuth";
 
 const Login = () => {
 	const [error, setError] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
 	const { setAuth }: any = UseAuth();
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -12,6 +13,7 @@ const Login = () => {
 
 	const handleSubmit = async (e: any) => {
 		e.preventDefault();
+		setIsLoading(true);
 		setError("");
 
 		const formData = new FormData(e.target);
@@ -31,6 +33,8 @@ const Login = () => {
 			} else setError(res.data.message);
 		} catch (err) {
 			console.log(err);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -39,7 +43,7 @@ const Login = () => {
 			<h1>Login Page</h1>
 			<input name="email" type="email" placeholder="Enter your email" />
 			<input name="password" type="password" placeholder="Password" />
-			<button>Login</button>
+			<button disabled={isLoading}>Login</button>
 			{error && <span>{error}</span>}
 			<p>
 				Don't have an account yet?
