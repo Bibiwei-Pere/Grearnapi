@@ -1,7 +1,7 @@
 import "dotenv/config";
 import "express-async-errors";
 import express from "express";
-import corsOptions from "./config/corsOptions.js";
+// import corsOptions from "./config/corsOptions.js";
 import path from "path";
 import cors from "cors";
 import { logEvents, logger, errorHandler } from "./middleware/logger.js";
