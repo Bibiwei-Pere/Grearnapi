@@ -73,12 +73,6 @@ export const signin = async (req, res) => {
 		res.cookie("jwt", refreshToken, { httpOnly: true, secure: true, sameSite: "None", maxAge: 24 * 60 * 60 * 1000 })
 			.status(200)
 			.json({ accessToken, roles });
-
-		// res.cookie("jwt", accessToken, {
-		// 	httpOnly: true,
-		// 	//secure: true,
-		// 	maxAge: 7 * 24 * 60 * 60 * 1000,
-		// })
 	} catch (err) {
 		console.log(err);
 		res.status(500).json({ message: "Failed to Signin!" });

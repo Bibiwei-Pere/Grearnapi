@@ -1,7 +1,6 @@
 import "dotenv/config";
 import "express-async-errors";
 import express from "express";
-import corsOptions from "./config/corsOptions.js";
 import path from "path";
 import cors from "cors";
 import { logEvents, logger, errorHandler } from "./middleware/logger.js";
@@ -17,7 +16,7 @@ import noteRoutes from "./routes/noteRoutes.js";
 import settingsRoutes from "./routes/settingsRoutes.js";
 import transactionRoutes from "./routes/transactionRoutes.js";
 import passwordRoute from "./routes/forgotPwdRoute.js";
-import serviceRoutes from "./routes/serviceRoutes.js";
+import depositRoutes from "./routes/depositRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -28,8 +27,6 @@ connectDB();
 
 app.use(logger);
 app.use(express.json());
-app.use(cors(corsOptions));
-// app.use(cors());
 app.use(cookieParser());
 app.use("/", express.static(path.join(__dirname, "public")));
 app.use("/", rootRoutes);
@@ -38,7 +35,7 @@ app.use("/users", userRoutes);
 app.use("/notes", noteRoutes);
 app.use("/settings", settingsRoutes);
 app.use("/transaction", transactionRoutes);
-app.use("/service", serviceRoutes);
+app.use("/deposit", depositRoutes);
 app.use("/pwd", passwordRoute);
 
 app.all("*", (req, res) => {

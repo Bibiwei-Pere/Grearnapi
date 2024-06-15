@@ -10,6 +10,7 @@
 		"express-async-errors": "^3.1.1",
 		"express-async-handler": "^1.2.0",
 		"express-rate-limit": "^7.1.5",
+		"got": "^14.4.1",
 		"jsonwebtoken": "^9.0.2",
 		"mongodb": "^6.3.0",
 		"mongoose": "^8.0.4",
