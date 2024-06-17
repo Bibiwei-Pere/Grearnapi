@@ -1,5 +1,6 @@
 import { useState, useEffect, Key } from "react";
 import { getAllUsers } from "../apiRequests/apirequest";
+import { Link } from "react-router-dom";
 
 const Admin = () => {
 	const [users, setUsers] = useState<any[]>([]);
@@ -41,6 +42,15 @@ const Admin = () => {
 				) : (
 					<p>No users to display</p>
 				)}
+				<br />
+				<Link to="/admin/create">
+					<button>Create profile</button>
+				</Link>
+				<br />
+				<br />
+				<Link to="/admin/notification">
+					<button>Create Notification</button>
+				</Link>
 			</div>
 		</>
 	);

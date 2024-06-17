@@ -28,7 +28,8 @@ const Login = () => {
 			if (res.status === 200) {
 				const accessToken = res?.data?.accessToken;
 				const roles = res?.data?.roles;
-				setAuth({ email, password, roles, accessToken });
+				const id = res?.data?.id;
+				setAuth({ id, roles, accessToken });
 				navigate(from, { replace: true });
 			} else setError(res.data.message);
 		} catch (err) {

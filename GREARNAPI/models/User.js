@@ -35,6 +35,13 @@ const userSchema = new mongoose.Schema(
 			type: Number,
 			default: 0,
 		},
+		dob: {
+			type: String,
+		},
+		country: {
+			type: String,
+			default: "+234",
+		},
 		transactions: {
 			type: [
 				{
@@ -147,6 +154,10 @@ const userSchema = new mongoose.Schema(
 			],
 		},
 		refreshToken: String,
+		avatar: {
+			type: String,
+			default: "https://res.cloudinary.com/dxz2vce9i/image/upload/v1718620172/fg7kkhasl2z5fkwmcggc.jpg",
+		},
 	},
 	{
 		timestamps: true,

@@ -8,6 +8,10 @@ import Dashboard from "./components/Dashboard";
 import RequireAuth from "./hooks/RequireAuth";
 import Admin from "./components/Admin";
 import Users from "./components/Users";
+import Settings from "./components/Settings";
+import CreateUser from "./components/CreateUser";
+import CreateNotification from "./components/CreateNotification";
+import Upload from "./components/Upload";
 
 const App = () => {
 	return (
@@ -22,11 +26,19 @@ const App = () => {
 
 				{/* Protected Routes */}
 				<Route element={<RequireAuth allowedRoles={["User"]} />}>
-					<Route path="dashboard" element={<Dashboard />} />
-					<Route path="user" element={<Users />} />
+					<Route path="dashboard" element={<Layout />}>
+						<Route index element={<Dashboard />} />
+						<Route path="user" element={<Users />} />
+						<Route path="settings" element={<Settings />} />
+						<Route path="upload" element={<Upload />} />
+					</Route>
 				</Route>
 				<Route element={<RequireAuth allowedRoles={["Admin"]} />}>
-					<Route path="admin" element={<Admin />} />
+					<Route path="admin" element={<Layout />}>
+						<Route index element={<Admin />} />
+						<Route path="create" element={<CreateUser />} />
+						<Route path="notification" element={<CreateNotification />} />
+					</Route>
 				</Route>
 				{/* End Protected Routes */}
 				<Route path="*" element={<h1>404, Go Back</h1>} />

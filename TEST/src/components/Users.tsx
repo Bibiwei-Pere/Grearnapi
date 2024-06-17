@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { getUser } from "../apiRequests/apirequest";
+import { User } from "../apiRequests/apirequest";
 import UseAuth from "../hooks/UseAuth";
+import { Link } from "react-router-dom";
 
 const Users = () => {
 	const [users, setUsers] = useState<any[]>([]);
@@ -11,7 +12,7 @@ const Users = () => {
 		let isMounted = true;
 		const controller = new AbortController();
 
-		getUser(isMounted, setUsers, controller, auth);
+		User(isMounted, setUsers, controller, auth, "get");
 
 		return () => {
 			isMounted = false;
@@ -45,6 +46,11 @@ const Users = () => {
 			) : (
 				<p>No user found</p>
 			)}
+			<br />
+			<Link to="/dashboard/settings">
+				<button>Edit profile</button>
+			</Link>
+			<br />
 		</div>
 	);
 };

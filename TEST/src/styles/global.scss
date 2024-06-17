@@ -47,6 +47,12 @@ body {
 			input {
 				padding: 20px;
 			}
+			select {
+				padding: 0 10px;
+				option {
+					padding: 10px;
+				}
+			}
 
 			span {
 				color: red;
@@ -75,6 +81,21 @@ body {
 				padding: 10px;
 				border: 1px solid black;
 			}
+		}
+
+		.image {
+			display: flex;
+			gap: 30px;
+			align-items: center;
+			.file {
+				padding: 20px;
+				background-color: #bed9d8;
+			}
+		}
+		img {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
 		}
 	}
 }

@@ -1,13 +1,13 @@
 import User from "../models/User.js";
-import Note from "../models/Note.js";
+import Notification from "../models/Notification.js";
 
 // getAllNotes: Get all notes from MongoDB
-export const getAllNotes = async (req, res) => {
+export const getNotification = async (req, res) => {
 	// Get all notes from MongoDB
-	const notes = await Note.find().lean();
+	const notes = await Notification.find().lean();
 
 	// If no notes
-	if (!notes?.length) return res.status(400).json({ message: "No notes found" });
+	if (!notes?.length) return res.status(201).json({ message: "No notes found" });
 
 	// Add username to each note before sending the response
 	const notesWithUser = await Promise.all(
@@ -21,37 +21,42 @@ export const getAllNotes = async (req, res) => {
 };
 
 // createNewNote: Create new note for all users
-export const createNewNote = async (req, res) => {
-	const { user, title, text } = req.body;
+export const createNotification = async (req, res) => {
+	const { id, title, text, author } = req.body.data;
 
 	// Check if fields are empty
-	if (!title) return res.status(400).json({ message: "Title field is required" });
-	if (!text) return res.status(400).json({ message: "Text field is required" });
-	if (!user) {
+	if (!title) return res.status(201).json({ message: "Title field is required" });
+	if (!text) return res.status(201).json({ message: "Text field is required" });
+	if (!author) return res.status(201).json({ message: "Text field is required" });
+
+	if (!id) {
 		const users = await User.find().lean().exec();
 
 		// Create and store the new note for each user
 		const notePromises = users.map(async (user) => {
-			const note = await Note.create({ user: user._id, title, text });
+			const note = await Notification.create({ user: user._id, title, text, author });
 			await note.save();
 		});
 
 		const createdNotes = await Promise.all(notePromises);
 
-		if (createdNotes.length > 0) return res.status(201).json({ message: "New note created for all users" });
-		else return res.status(400).json({ message: "Failed to create note for all users" });
+		if (createdNotes.length > 0) return res.status(200).json({ message: "New note created for all users" });
+		else return res.status(201).json({ message: "Failed to create note for all users" });
 	} else {
-		const note = await Note.create({ user, title, text });
+		const user = await User.findById(id).exec();
+		if (!user) return res.status(201).json({ message: "User not found" });
+
+		const note = await Notification.create({ user: id, title, text, author });
 
 		if (note) {
 			await note.save();
-			return res.status(201).json({ message: `New note created for ${user}` });
+			return res.status(200).json({ message: `New notification created for ${user.username}` });
 		} else return res.status(400).json({ message: "Invalid note data received" });
 	}
 };
 
 // updateNote: Update a note
-export const updateNote = async (req, res) => {
+export const updateNotification = async (req, res) => {
 	const { id, user, title, text, completed } = req.body;
 
 	// Confirm data
@@ -62,11 +67,11 @@ export const updateNote = async (req, res) => {
 	if (typeof completed !== "boolean") return res.status(400).json({ message: "Completed field as to be true or false" });
 
 	// Confirm note exists to update
-	const note = await Note.findById(id).exec();
+	const note = await Notification.findById(id).exec();
 	if (!note) return res.status(400).json({ message: "Note not found" });
 
 	// Check for duplicate title
-	const duplicate = await Note.findOne({ title }).collation({ locale: "en", strength: 2 }).lean().exec();
+	const duplicate = await Notification.findOne({ title }).collation({ locale: "en", strength: 2 }).lean().exec();
 
 	// Allow renaming of the original note
 	if (duplicate && duplicate?._id.toString() !== id) return res.status(409).json({ message: "Title already exists, select another" });
@@ -81,7 +86,7 @@ export const updateNote = async (req, res) => {
 };
 
 // deleteNote: Delete a note
-export const deleteNote = async (req, res) => {
+export const deleteNotification = async (req, res) => {
 	const { id } = req.body;
 
 	// Confirm data
@@ -91,7 +96,7 @@ export const deleteNote = async (req, res) => {
 		if (result.deletedCount > 0) res.json(`All notes deleted`);
 		else res.status(400).json({ message: "No notes found to delete" });
 	} else {
-		const note = await Note.findById(id).exec();
+		const note = await Notification.findById(id).exec();
 		if (!note) return res.status(400).json({ message: "Note not found" });
 
 		await note.deleteOne();

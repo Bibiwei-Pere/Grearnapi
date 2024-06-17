@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 export const signup = async (req, res) => {
-	const { firstname, lastname, phone, username, email, password, cpassword } = req.body;
+	const { firstname, lastname, phone, username, email, password, cpassword, dob, country } = req.body;
 
 	if (!username) return res.status(201).json({ message: "Username field is required" });
 	if (!password) return res.status(201).json({ message: "Password field is required" });
@@ -18,7 +18,7 @@ export const signup = async (req, res) => {
 	try {
 		const hashedPwd = await bcrypt.hash(password, 10);
 
-		const userObject = { firstname, lastname, phone, username, email, password: hashedPwd };
+		const userObject = { firstname, lastname, phone, username, email, password: hashedPwd, dob, country };
 
 		const user = await User.create(userObject);
 
@@ -72,7 +72,7 @@ export const signin = async (req, res) => {
 		// Creates Secure Cookie with refresh token
 		res.cookie("jwt", refreshToken, { httpOnly: true, secure: true, sameSite: "None", maxAge: 24 * 60 * 60 * 1000 })
 			.status(200)
-			.json({ accessToken, roles });
+			.json({ accessToken, roles, id: foundUser._id });
 	} catch (err) {
 		console.log(err);
 		res.status(500).json({ message: "Failed to Signin!" });
