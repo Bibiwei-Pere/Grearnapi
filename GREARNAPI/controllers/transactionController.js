@@ -15,60 +15,57 @@ export const getAllTransaction = async (req, res) => {
 };
 
 export const createNewTransaction = async (req) => {
-	const { user, provider_code, transactionType, amount, number } = req.body;
+	const { id, product, transactionType, amount, tx_ref } = req.body.data;
 
-	if (!user) throw new Error("User field is required");
-	if (!provider_code) throw new Error("Provider_code field is required");
+	if (!id) throw new Error("User field is required");
+	if (!product) throw new Error("Product field is required");
 	if (!transactionType) throw new Error("TransactionType field is required");
 	if (!amount) throw new Error("Amount field is required");
 
-	const admin = await User.findOne({ username: "Admin" }).lean().exec();
-	if (!admin) throw new Error("Admin not found");
+	const amountValue = parseFloat(amount);
 
-	const currentUser = await User.findById(user).exec();
+	const currentUser = await User.findById(id).exec();
 	if (!currentUser) throw new Error("CurrentUser not found");
-	if (transactionType !== "Deposit" && currentUser.walletBalance < amount) throw new Error("Wallet balance is low. Please fund");
+	if (transactionType !== "Deposit" && currentUser.walletBalance < amountValue) throw new Error("Wallet balance is low. Please fund");
 	else {
 		await currentUser.save();
-		const transaction = await Transaction.create({ user, product: provider_code, transactionType, amount, number });
+		const transaction = await Transaction.create({ user: id, product, transactionType, amount: amountValue, tx_ref });
 
-		if (transaction) return transaction.id;
-		else throw new Error("Invalid transaction received");
+		if (transaction) {
+			await transaction.save();
+			return transaction.id;
+		} else throw new Error("Invalid transaction received");
 	}
 };
 
-export const updateTransaction = async (id, refund, req, res) => {
-	const { provider_code, amount, completed, discount } = req.body;
-	if (typeof completed !== "boolean") return res.status(400).json({ message: "Completed field as to be true or false" });
+export const updateTransaction = async (req, res) => {
+	const { OrderID, completed, refund } = req.body.data;
+	if (!OrderID) return res.status(201).json({ message: "OrderID field is required" });
+	if (typeof completed !== "boolean") return res.status(201).json({ message: "Completed field as to be true or false" });
 
-	const transaction = await Transaction.findById(id).exec();
-	if (!transaction) return res.status(400).json({ message: "Transaction not found" });
-	console.log("TRANSACTION1", transaction);
+	const transaction = await Transaction.findById(OrderID).exec();
+	if (!transaction) return res.status(201).json({ message: "Transaction not found" });
 
 	const currentUser = await User.findById(transaction.user).exec();
-	if (!currentUser) return res.status(400).json({ message: "CurrentUser not found" });
+	if (!currentUser) return res.status(201).json({ message: "CurrentUser not found" });
 
-	const calcDiscount = amount * (discount / 100);
-	const newAmount = amount - calcDiscount;
-	if (provider_code && amount && !discount && transaction.transactionType !== "Deposit") currentUser.walletBalance -= amount;
-	else if (completed && transaction.transactionType === "Deposit") currentUser.walletBalance += amount;
-	else if (provider_code && amount && discount) currentUser.walletBalance -= newAmount;
-	else console.log("Error in MTN transaction");
+	if (transaction.transactionType !== "Deposit") currentUser.walletbalance -= transaction.amount;
+	else if (completed && transaction.transactionType === "Deposit") currentUser.walletbalance += transaction.amount;
 
-	console.log("New wallet bal", currentUser.walletBalance);
+	console.log("New wallet bal", currentUser.walletbalance);
 
 	if (refund === true) {
-		currentUser.walletBalance += amount;
+		currentUser.walletbalance += transaction.amount;
 		transaction.completed = false;
 	} else transaction.completed = completed;
 
 	await currentUser.save();
 	await transaction.save();
-	// res.json(`'${updatedTransaction.id}' updated`);
+	res.status(200).json({ message: "Transaction succesfully updated" });
 };
 
 export const deleteTransaction = async (req, res) => {
-	const { id } = req.body;
+	const { id } = req.body.data;
 
 	if (!id) {
 		const result = await Transaction.deleteMany({});

@@ -16,7 +16,7 @@ import userRoutes from "./routes/userRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import transactionRoutes from "./routes/transactionRoutes.js";
 import passwordRoute from "./routes/forgotPwdRoute.js";
-import depositRoutes from "./routes/depositRoutes.js";
+import fundRoutes from "./routes/fundRoutes.js";
 import uploadRoutes from "./routes/uploadImage.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -36,7 +36,7 @@ app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/notification", notificationRoutes);
 app.use("/transaction", transactionRoutes);
-app.use("/deposit", depositRoutes);
+app.use("/deposit", fundRoutes);
 app.use("/pwd", passwordRoute);
 app.use("/upload", uploadRoutes);
 

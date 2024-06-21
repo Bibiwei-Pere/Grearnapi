@@ -21,7 +21,7 @@ const transactionSchema = new mongoose.Schema(
 			type: Number,
 			required: true,
 		},
-		number: {
+		tx_ref: {
 			type: String,
 		},
 		completed: {
