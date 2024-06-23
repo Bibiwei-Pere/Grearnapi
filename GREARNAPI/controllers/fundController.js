@@ -1,40 +1,20 @@
-import { createNewTransaction, updateTransaction } from "./transactionController.js";
-import { generateRandomCode } from "../config/helpers.js";
+import axios from "axios";
+const { FLUTTER_WAVE_URL, FLW_SECRET_KEY } = process.env;
 
-const refund = false;
+export const getBanks = async (req, res) => {
+	try {
+		const options = {
+			method: "GET",
+			url: `${FLUTTER_WAVE_URL}/banks/NG`,
+			headers: {
+				Authorization: `Bearer ${FLW_SECRET_KEY}`,
+				"Content-Type": "application/json",
+			},
+		};
 
-export const payWithFlutterwave = async (req, res) => {
-	console.log(req.body);
-
-	const id = await createNewTransaction(req, res);
-	return id;
+		const response = await axios(options);
+		return response.data;
+	} catch (error) {
+		console.log("Failed to get banks", error);
+	}
 };
-
-// import got from "got";
-
-// const { FLUTTER_WAVE_URL, FLW_SECRET_KEY, FRONTEND_URL } = process.env;
-
-// export const payWithFlutterwave = async (req, res) => {
-// 	const { firstname, lastname, amount, email, phone } = req.body;
-// 	const tx_ref = await generateRandomCode();
-
-// 	const response = await got
-// 		.post(FLUTTER_WAVE_URL, {
-// 			headers: {
-// 				Authorization: `Bearer ${FLW_SECRET_KEY}`,
-// 			},
-// 			json: {
-// 				tx_ref: tx_ref,
-// 				amount: amount,
-// 				currency: "NGN",
-// 				redirect_url: FRONTEND_URL,
-// 				customer: {
-// 					email: email,
-// 					phonenumber: phone,
-// 					name: firstname + " " + lastname,
-// 				},
-// 			},
-// 		})
-// 		.json();
-// 	return response;
-// };

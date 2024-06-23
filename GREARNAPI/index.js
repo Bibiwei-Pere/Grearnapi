@@ -36,7 +36,7 @@ app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/notification", notificationRoutes);
 app.use("/transaction", transactionRoutes);
-app.use("/deposit", fundRoutes);
+app.use("/fund", fundRoutes);
 app.use("/pwd", passwordRoute);
 app.use("/upload", uploadRoutes);
 

@@ -12,7 +12,7 @@ export const getAllUsers = async (req, res) => {
 // createNewUser: To create a new user
 export const createNewUser = async (req, res) => {
 	const { firstname, lastname, phone, username, email, roles, password, cpassword, dob, country } = req.body.data;
-	console.log(req.body.data);
+
 	if (!username) return res.status(201).json({ message: "Username field is required" });
 	if (!password) return res.status(201).json({ message: "Password field is required" });
 	if (password !== cpassword) return res.status(201).json({ message: "Passwords do not match" });
@@ -38,7 +38,7 @@ export const createNewUser = async (req, res) => {
 
 // updateUser: To update a User
 export const updateUser = async (req, res) => {
-	const { id, firstname, lastname, phone, username, email, roles, password, walletbalance, referalbalance, transactions, dob, country, avatar } = req.body.data;
+	const { id, firstname, lastname, phone, username, email, roles, password, walletbalance, referalbalance, transactions, dob, country, avatar, accountnumber, accountname, bankname } = req.body.data;
 	if (!id) return res.status(201).json({ message: "ID field is required" });
 
 	const user = await User.findById(id).exec();
@@ -68,6 +68,9 @@ export const updateUser = async (req, res) => {
 	}
 	if (transactions) user.transactions = transactions;
 	if (avatar) user.avatar = avatar;
+	if (accountnumber) user.accountnumber = accountnumber;
+	if (accountname) user.accountname = accountname;
+	if (bankname) user.bankname = bankname;
 
 	const updateUser = await user.save();
 	res.json({ message: `${updateUser.username} successfully updated` });

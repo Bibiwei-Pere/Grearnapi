@@ -16,6 +16,7 @@ export const getAllTransaction = async (req, res) => {
 
 export const createNewTransaction = async (req) => {
 	const { id, product, transactionType, amount, tx_ref } = req.body.data;
+	// const { id, product, transactionType, amount, tx_ref } = req.body;
 
 	if (!id) throw new Error("User field is required");
 	if (!product) throw new Error("Product field is required");
@@ -40,6 +41,8 @@ export const createNewTransaction = async (req) => {
 
 export const updateTransaction = async (req, res) => {
 	const { OrderID, completed, refund } = req.body.data;
+	// const { OrderID, completed, refund } = req.body;
+
 	if (!OrderID) return res.status(201).json({ message: "OrderID field is required" });
 	if (typeof completed !== "boolean") return res.status(201).json({ message: "Completed field as to be true or false" });
 
@@ -65,10 +68,12 @@ export const updateTransaction = async (req, res) => {
 };
 
 export const deleteTransaction = async (req, res) => {
-	const { id } = req.body.data;
+	const { OrderID: id } = req.body.data;
+	// const { OrderID: id } = req.body;
 
 	if (!id) {
 		const result = await Transaction.deleteMany({});
+		console.log(result);
 		if (result.deletedCount > 0) res.json(`All transactions deleted`);
 		else res.status(400).json({ message: "No transaction found to delete" });
 	} else {

@@ -42,6 +42,15 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			default: "+234",
 		},
+		accountnumber: {
+			type: String,
+		},
+		accountname: {
+			type: String,
+		},
+		bankname: {
+			type: String,
+		},
 		transactions: {
 			type: [
 				{
