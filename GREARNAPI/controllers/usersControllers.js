@@ -38,7 +38,7 @@ export const createNewUser = async (req, res) => {
 
 // updateUser: To update a User
 export const updateUser = async (req, res) => {
-	const { id, firstname, lastname, phone, username, email, roles, password, walletbalance, referalbalance, transactions, dob, country, avatar, accountnumber, accountname, bankname, bankcode } = req.body.data;
+	const { id, firstname, lastname, phone, username, email, roles, password, walletbalance, referalbalance, transactions, dob, country, avatar, accountnumber, accountname, bankname } = req.body.data;
 	if (!id) return res.status(201).json({ message: "ID field is required" });
 
 	const user = await User.findById(id).exec();
@@ -71,7 +71,6 @@ export const updateUser = async (req, res) => {
 	if (accountnumber) user.accountnumber = accountnumber;
 	if (accountname) user.accountname = accountname;
 	if (bankname) user.bankname = bankname;
-	if (bankcode) user.bankcode = bankcode;
 
 	const updateUser = await user.save();
 	res.json({ message: `${updateUser.username} successfully updated` });
