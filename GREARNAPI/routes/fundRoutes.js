@@ -46,10 +46,10 @@ router.post("/withdraw", async (req, res) => {
 		if (response.status === "success") {
 			const message = await updateTransaction(modifiedReq, res);
 			res.status(200).json(message);
-		} else res.status(201).json(response);
+		} else res.status(201).json({ message: "Loading" });
 	} catch (error) {
 		console.log("Failed to create order", error);
-		return res.status(201).send(error);
+		return res.status(203).json(error);
 	}
 });
 
