@@ -51,6 +51,9 @@ const userSchema = new mongoose.Schema(
 		bankname: {
 			type: String,
 		},
+		bankcode: {
+			type: String,
+		},
 		transactions: {
 			type: [
 				{
