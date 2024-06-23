@@ -27,10 +27,11 @@ router.patch("/deposit", async (req, res) => {
 
 router.post("/withdraw", async (req, res) => {
 	const { account_bank, account_number, amount } = req.body.data;
+
 	try {
 		const ref = await generateRandomCode();
 		const OrderID = await createNewTransaction(req, res);
-		const modifiedReq = { ...req, body: { ...req.body, OrderID } };
+		const modifiedReq = { ...req, body: { data: { ...req.body.data, OrderID } } };
 
 		const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_KEY);
 		const details = {
