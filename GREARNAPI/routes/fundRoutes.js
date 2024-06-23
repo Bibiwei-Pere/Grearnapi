@@ -49,7 +49,7 @@ router.post("/withdraw", async (req, res) => {
 		} else res.status(201).json(response);
 	} catch (error) {
 		console.log("Failed to create order", error);
-		return res.status(400).send(error.message);
+		return res.status(400).send(error);
 	}
 });
 
