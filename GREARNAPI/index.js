@@ -15,9 +15,13 @@ import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import transactionRoutes from "./routes/transactionRoutes.js";
+import investmentRoutes from "./routes/investmentRoutes.js";
 import passwordRoute from "./routes/forgotPwdRoute.js";
 import fundRoutes from "./routes/fundRoutes.js";
 import uploadRoutes from "./routes/uploadImage.js";
+
+import cron from "node-cron";
+import { updateProfit } from "./controllers/fundController.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -39,6 +43,8 @@ app.use("/transaction", transactionRoutes);
 app.use("/fund", fundRoutes);
 app.use("/pwd", passwordRoute);
 app.use("/upload", uploadRoutes);
+app.use("/investment", investmentRoutes);
+app.use("/cron", updateProfit);
 
 app.all("*", (req, res) => {
 	res.status(404);
@@ -48,6 +54,10 @@ app.all("*", (req, res) => {
 });
 
 app.use(errorHandler);
+
+// cron.schedule("*/5 * * * * *", () => {
+// 	updateProfit();
+// });
 
 mongoose.connection.once("open", () => {
 	console.log("Connected to MongoDB");

@@ -14,34 +14,32 @@ export const getAllTransaction = async (req, res) => {
 	res.json(transactionWithUser);
 };
 
-export const createNewTransaction = async (req) => {
-	const { id, product, transactionType, amount, tx_ref } = req.body.data;
-	// const { id, product, transactionType, amount, tx_ref } = req.body;
+export const createNewTransaction = async (req, res) => {
+	const { id, product, transactionType, amount, tx_ref, roi, duration } = req.body.data;
 
-	if (!id) throw new Error("User field is required");
-	if (!product) throw new Error("Product field is required");
-	if (!transactionType) throw new Error("TransactionType field is required");
-	if (!amount) throw new Error("Amount field is required");
+	if (!id) return res.status(201).json({ message: "User field is required" });
+	if (!product) return res.status(201).json({ message: "Product field is required" });
+	if (!transactionType) return res.status(201).json({ message: "TransactionType field is required" });
+	if (!amount) return res.status(201).json({ message: "Amount field is required" });
 
 	const amountValue = parseFloat(amount);
 
 	const currentUser = await User.findById(id).exec();
-	if (!currentUser) throw new Error("CurrentUser not found");
-	if (transactionType !== "Deposit" && currentUser.walletBalance < amountValue) throw new Error("Wallet balance is low. Please fund");
+	if (!currentUser) return res.status(201).json({ message: "CurrentUser not found" });
+	if (transactionType !== "Deposit" && currentUser.walletBalance < amountValue) return res.status(201).json({ message: "Wallet balance is low. Please fund" });
 	else {
 		await currentUser.save();
-		const transaction = await Transaction.create({ user: id, product, transactionType, amount: amountValue, tx_ref });
+		const transaction = await Transaction.create({ user: id, product, transactionType, amount: amountValue, tx_ref, roi, duration });
 
 		if (transaction) {
 			await transaction.save();
-			return transaction.id;
-		} else throw new Error("Invalid transaction received");
+			return res.status(200).json(transaction.id);
+		} else return res.status(201).json({ message: "Invalid transaction received" });
 	}
 };
 
 export const updateTransaction = async (req, res) => {
 	const { OrderID, completed, refund } = req.body.data;
-	// const { OrderID, completed, refund } = req.body;
 
 	if (!OrderID) return res.status(201).json({ message: "OrderID field is required" });
 	if (typeof completed !== "boolean") return res.status(201).json({ message: "Completed field as to be true or false" });
@@ -51,11 +49,19 @@ export const updateTransaction = async (req, res) => {
 
 	const currentUser = await User.findById(transaction.user).exec();
 	if (!currentUser) return res.status(201).json({ message: "CurrentUser not found" });
+	if (currentUser.walletbalance < transaction.amount) return res.status(201).json({ message: "Insufficient funds!" });
 
-	if (transaction.transactionType !== "Deposit") currentUser.walletbalance -= transaction.amount;
-	else if (completed && transaction.transactionType === "Deposit") currentUser.walletbalance += transaction.amount;
+	if (transaction.transactionType !== "Deposit") {
+		currentUser.walletbalance -= transaction.amount;
 
-	console.log("New wallet bal", currentUser.walletbalance);
+		if (completed && transaction.transactionType === "Investment") {
+			const roi = (transaction.roi / 100) * transaction.amount;
+			transaction.active = true;
+			currentUser.activeInvestment += 1;
+			currentUser.lockedbalance += transaction.amount;
+			currentUser.profitbalance += roi;
+		}
+	} else if (completed && transaction.transactionType === "Deposit") currentUser.walletbalance += transaction.amount;
 
 	if (refund === true) {
 		currentUser.walletbalance += transaction.amount;
@@ -69,7 +75,6 @@ export const updateTransaction = async (req, res) => {
 
 export const deleteTransaction = async (req, res) => {
 	const { OrderID: id } = req.body.data;
-	// const { OrderID: id } = req.body;
 
 	if (!id) {
 		const result = await Transaction.deleteMany({});

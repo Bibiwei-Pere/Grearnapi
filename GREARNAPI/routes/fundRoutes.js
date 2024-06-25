@@ -3,7 +3,7 @@ import { createNewTransaction, updateTransaction } from "../controllers/transact
 const router = express.Router();
 import Flutterwave from "flutterwave-node-v3";
 import { generateRandomCode } from "../config/helpers.js";
-import { getBanks } from "../controllers/fundController.js";
+import { getBanks, updateProfit } from "../controllers/fundController.js";
 
 router.post("/deposit", async (req, res) => {
 	try {

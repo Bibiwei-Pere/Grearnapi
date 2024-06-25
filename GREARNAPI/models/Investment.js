@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import AutoCount from "mongoose-sequence";
 
-const transactionSchema = new mongoose.Schema(
+const investmentSchema = new mongoose.Schema(
 	{
 		// Each note belongs to a user with a special number ObjectId that matches that user
 		user: {
@@ -13,45 +13,50 @@ const transactionSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
-		transactionType: {
+		image: {
 			type: String,
-			required: true,
+			default: "https://res.cloudinary.com/dxz2vce9i/image/upload/v1718620172/fg7kkhasl2z5fkwmcggc.jpg",
 		},
-		amount: {
+		geo_location: {
+			type: String,
+			default: "South-west",
+		},
+		minimum_invest: {
 			type: Number,
 			required: true,
 		},
 		roi: {
 			type: Number,
+			default: 4,
 		},
 		duration: {
 			type: Number,
 			default: 0,
 		},
-		tx_ref: {
+		info: {
 			type: String,
+			default: "Details about this product is coming soon",
 		},
 		completed: {
 			type: Boolean,
 			default: false,
 		},
-		active: {
-			type: Boolean,
-			default: false,
+		gain: {
+			type: Number,
+			default: 50,
 		},
 	},
 
-	// Keeps time of when each notes was created & if any changes was made
 	{
 		timestamps: true,
 	}
 );
 
 // give numbers to each ticket starting from 500
-transactionSchema.plugin(AutoCount(mongoose), {
-	inc_field: "transaction",
-	id: "transactionNums",
+investmentSchema.plugin(AutoCount(mongoose), {
+	inc_field: "investment",
+	id: "investmentNums",
 	start_seq: 1,
 });
 
-export default mongoose.model("Transaction", transactionSchema);
+export default mongoose.model("Investment", investmentSchema);
