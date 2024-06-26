@@ -70,7 +70,7 @@ export const deleteInvestment = async (req, res) => {
 	if (!id) {
 		const result = await Investment.deleteMany({});
 		console.log(result);
-		if (result.deletedCount > 0) res.json(`All investments deleted`);
+		if (result.deletedCount > 0) res.status(200).json(`All investments deleted`);
 		else res.status(201).json({ message: "No investment found to delete" });
 	} else {
 		const investments = await Investment.findById(id).exec();
