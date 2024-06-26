@@ -16,18 +16,24 @@ export const getAllInvestment = async (req, res) => {
 
 export const createNewInvestment = async (req, res) => {
 	const { id, product, geo_location, minimum_invest, roi, info, image, gain, duration } = req.body.data;
-	let newDuration = 0;
 
 	if (!id) return res.status(201).json({ message: "User field is required" });
 	if (!product) return res.status(201).json({ message: "Product field is required" });
 	if (!minimum_invest) return res.status(201).json({ message: "Minimum_invest field is required" });
-	if (duration) newDuration = parseInt(duration);
+	if (!roi) return res.status(201).json({ message: "Roi field is required" });
+	if (!gain) return res.status(201).json({ message: "Gain field is required" });
+	if (!duration) return res.status(201).json({ message: "Duration field is required" });
+
+	let parseMinimum_invest = parseInt(minimum_invest);
+	let parseRoi = parseInt(roi);
+	let parseGain = parseInt(gain);
+	let parseDuration = parseInt(duration);
 
 	const currentUser = await User.findById(id).exec();
 	if (!currentUser) return res.status(201)({ message: "CurrentUser not found" });
 	else {
 		await currentUser.save();
-		const investment = await Investment.create({ user: id, product, geo_location, minimum_invest, roi, info, image, gain, duration: newDuration });
+		const investment = await Investment.create({ user: id, product, geo_location, minimum_invest: parseMinimum_invest, roi: parseRoi, info, image, gain: parseGain, duration: parseDuration });
 
 		if (investment) {
 			await investment.save();

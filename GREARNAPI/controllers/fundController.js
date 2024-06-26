@@ -1,5 +1,4 @@
 import axios from "axios";
-import path from "path";
 import Transaction from "../models/Transaction.js";
 import User from "../models/User.js";
 

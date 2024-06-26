@@ -22,7 +22,7 @@ export const createNewTransaction = async (req, res) => {
 	if (!transactionType) return res.status(201).json({ message: "TransactionType field is required" });
 	if (!amount) return res.status(201).json({ message: "Amount field is required" });
 
-	const amountValue = parseFloat(amount);
+	const amountValue = parseInt(amount);
 
 	const currentUser = await User.findById(id).exec();
 	if (!currentUser) return res.status(201).json({ message: "CurrentUser not found" });
