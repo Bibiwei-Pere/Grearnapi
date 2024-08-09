@@ -8,7 +8,7 @@ import { getBanks } from "../controllers/fundController.js";
 router.post("/deposit", async (req, res) => {
 	try {
 		const { OrderID } = await createNewTransaction(req, res);
-		res.status(200).json(OrderID);
+		res.status(200).json({ OrderID });
 	} catch (error) {
 		console.log("Failed to create order", error);
 		res.status(400).send(error.message);
