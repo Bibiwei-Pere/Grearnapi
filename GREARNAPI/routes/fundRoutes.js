@@ -3,11 +3,11 @@ import { createNewTransaction, updateTransaction } from "../controllers/transact
 const router = express.Router();
 import Flutterwave from "flutterwave-node-v3";
 import { generateRandomCode } from "../config/helpers.js";
-import { getBanks, updateProfit } from "../controllers/fundController.js";
+import { getBanks } from "../controllers/fundController.js";
 
 router.post("/deposit", async (req, res) => {
 	try {
-		const OrderID = await createNewTransaction(req, res);
+		const { OrderID } = await createNewTransaction(req, res);
 		res.status(200).json(OrderID);
 	} catch (error) {
 		console.log("Failed to create order", error);
@@ -30,8 +30,8 @@ router.post("/withdraw", async (req, res) => {
 
 	try {
 		const ref = await generateRandomCode();
-		const OrderID = await createNewTransaction(req, res);
-		const modifiedReq = { ...req, body: { data: { ...req.body.data, OrderID } } };
+		const { orderID } = await createNewTransaction(req, res); // Capture the returned object
+		req.body.data.OrderID = orderID;
 
 		const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_KEY);
 		const details = {
@@ -44,13 +44,16 @@ router.post("/withdraw", async (req, res) => {
 		};
 		const response = await flw.Transfer.initiate(details);
 		console.log(response);
+
 		if (response.status === "success") {
-			const message = await updateTransaction(modifiedReq, res);
-			res.status(200).json(message);
-		} else res.status(201).json(response);
+			const message = await updateTransaction(req, res);
+			return res.status(200).json(message); // Ensure to return after sending a response
+		} else {
+			return res.status(201).json(response); // Ensure to return after sending a response
+		}
 	} catch (error) {
-		console.log("Failed to create order", error);
-		return res.status(203).json(error);
+		// console.error("Error during withdrawal:", error.message);
+		res.status(203).json({ error: error.message || "An unexpected error occurred" });
 	}
 });
 

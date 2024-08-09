@@ -33,14 +33,15 @@ export const createNewTransaction = async (req, res) => {
 
 		if (transaction) {
 			await transaction.save();
-			return res.status(200).json(transaction.id);
+			// return res.status(200).json(transaction.id);
+			return { orderID: transaction.id };
 		} else return res.status(201).json({ message: "Invalid transaction received" });
 	}
 };
 
 export const updateTransaction = async (req, res) => {
 	const { OrderID, completed, refund } = req.body.data;
-
+	console.log(OrderID);
 	if (!OrderID) return res.status(201).json({ message: "OrderID field is required" });
 	if (typeof completed !== "boolean") return res.status(201).json({ message: "Completed field as to be true or false" });
 
