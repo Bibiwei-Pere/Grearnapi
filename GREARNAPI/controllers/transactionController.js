@@ -50,9 +50,10 @@ export const updateTransaction = async (req, res) => {
 
 	const currentUser = await User.findById(transaction.user).exec();
 	if (!currentUser) return res.status(201).json({ message: "CurrentUser not found" });
-	if (currentUser.walletbalance < transaction.amount) return res.status(201).json({ message: "Insufficient funds!" });
 
 	if (transaction.transactionType !== "Deposit") {
+		if (currentUser.walletbalance < transaction.amount) return res.status(201).json({ message: "Insufficient funds!" });
+
 		currentUser.walletbalance -= transaction.amount;
 
 		if (completed && transaction.transactionType === "Investment") {
