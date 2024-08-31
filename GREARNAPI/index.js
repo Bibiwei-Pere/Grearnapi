@@ -30,16 +30,9 @@ const app = express();
 const PORT = process.env.PORT || 3500;
 connectDB();
 
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
-
 app.use(logger);
 app.use(express.json());
-//app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use("/", express.static(path.join(__dirname, "public")));
 app.use("/", rootRoutes);
