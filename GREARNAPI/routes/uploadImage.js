@@ -3,23 +3,42 @@ const router = express.Router();
 import { v2 as cloudinary } from "cloudinary";
 import Multer from "multer";
 
+// const storage = multer.diskStorage({});
+const storage = new Multer.diskStorage({});
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) cb(null, true);
+  else cb('invalid image file!', false);
+};
+const uploads = Multer({ storage, fileFilter });
+
 cloudinary.config({
 	cloud_name: process.env.CLOUD_NAME,
 	api_key: process.env.API_KEY,
 	api_secret: process.env.API_SECRET,
 });
 
-const handleUpload = async (file) => {
-	const res = await cloudinary.uploader.upload(file, {
-		resource_type: "auto",
+const handleUpload = async (req, res) => {
+	
+		try {
+		const res = await cloudinary.uploader.upload(req.file.path, {
+		  width: 500,
+      height: 500,
+      crop: 'fill',
 	});
-	return res;
+		res.status(200).json({ success: true, message: 'Your image has updated!' });
+	} catch (error) {
+		console.log(error);
+		res.send({
+			message: error.message,
+		});
+	}
 };
 
-const storage = new Multer.memoryStorage();
-const upload = Multer({
-	storage,
-});
+// const storage = new Multer.memoryStorage();
+//const upload = Multer({
+//	storage,
+//});
 
 const uploadImage = async (req, res) => {
 	try {
@@ -36,6 +55,6 @@ const uploadImage = async (req, res) => {
 	}
 };
 
-router.route("/").post(upload.single("my_file"), uploadImage);
+router.route("/").post(uploads.single("my_file"), handleUpload);
 
 export default router;
