@@ -19,21 +19,23 @@ cloudinary.config({
 });
 
 const handleUpload = async (req, res) => {
-	
-		try {
-		const res = await cloudinary.uploader.upload(req.file.path, {
-		  width: 500,
+  if (!req.file) {
+    return res.status(400).json({ success: false, message: 'No file uploaded' });
+  }
+
+  try {
+    const cloudinaryRes = await cloudinary.uploader.upload(req.file.path, {
+      width: 500,
       height: 500,
       crop: 'fill',
-	});
-		res.status(200).json({ success: true, message: 'Your image has updated!' });
-	} catch (error) {
-		console.log(error);
-		res.send({
-			message: error.message,
-		});
-	}
+    });
+    res.status(200).json({ success: true, message: 'Your image has been updated!', data: cloudinaryRes });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
+
 
 // const storage = new Multer.memoryStorage();
 //const upload = Multer({
