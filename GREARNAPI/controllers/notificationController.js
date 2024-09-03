@@ -57,7 +57,7 @@ export const createNotification = async (req, res) => {
 
 // updateNote: Update a note
 export const updateNotification = async (req, res) => {
-	const { id, user, title, text, completed } = req.body;
+	const { id, user, title, text, completed } = req.body.data;
 
 	// Confirm data
 	if (!id) return res.status(400).json({ message: "ID field is required" });
@@ -87,7 +87,7 @@ export const updateNotification = async (req, res) => {
 
 // deleteNote: Delete a note
 export const deleteNotification = async (req, res) => {
-	const { id } = req.body;
+	const { id } = req.body.data;
 
 	// Confirm data
 	if (!id) {
