@@ -100,6 +100,6 @@ export const deleteNotification = async (req, res) => {
 		if (!note) return res.status(400).json({ message: "Note not found" });
 
 		await note.deleteOne();
-		res.json(`Note with ID ${id} deleted`);
+		res.status(200).json({ message: "Notification deleted" });
 	}
 };
