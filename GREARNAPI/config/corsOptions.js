@@ -1,4 +1,4 @@
-const allowedOrigins = ["http://localhost:4000", "https://grearn.vercel.app"];
+const allowedOrigins = ["http://localhost:4000", "https://grearnadmin.vercel.app"];
 
 const corsOptions = {
   origin: (origin, callback) => {
