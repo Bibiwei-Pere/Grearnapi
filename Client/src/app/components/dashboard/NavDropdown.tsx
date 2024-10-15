@@ -199,7 +199,7 @@ export const AvatarDropdown = () => {
   return (
     <div>
       <DropdownMenuSeparator />
-      <DropdownMenuItem onClick={(e) => handleNavigation("/dashboard/profile", e)}>
+      <DropdownMenuItem onClick={(e) => handleNavigation("/dashboard", e)}>
         <User className='mr-2 h-4 w-4' />
         <span>Profile</span>
       </DropdownMenuItem>

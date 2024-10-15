@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Settings, Bell, User, Radio, AlignLeft } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import { useGetUser } from "@/hooks/users";
@@ -12,7 +11,6 @@ import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/s
 import { sidebarContent } from "./Sidebar";
 import { AvatarDropdown, NotificationDropdown, SignalDropdown } from "./NavDropdown";
 import { useGetUserSignals } from "@/hooks/signal";
-import { useSession } from "next-auth/react";
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -28,7 +26,6 @@ const Navbar = () => {
       setUnread(unreadSignals.length);
     }
   }, [signals]);
-  console.log(signals);
   const handleSignalRead = () => {
     setUnread((prev) => (prev > 0 ? prev - 1 : 0)); // Decrease unread count by 1
   };
@@ -151,7 +148,6 @@ const navbarContent = [
 ];
 
 const MobileMenu = () => {
-  const { data: session } = useSession();
   const pathname = usePathname();
   return (
     <Sheet>
@@ -163,12 +159,8 @@ const MobileMenu = () => {
           {sidebarContent.map((sidebar) => (
             <SheetClose asChild key={sidebar.title}>
               <Link
-                href={`${
-                  sidebar.title === "Affiliate Program" && session?.user?.role === "User" ? sidebar.url2 : sidebar.url
-                }`}
-                className={`${
-                  session?.user?.role === "Admin" ? "" : sidebar.class
-                } grid grid-cols-[30px,1fr] gap-1 items-center py-1 rounded-md px-2 hover:bg-black hover:text-yellow-500 text-black ${
+                href={sidebar.url}
+                className={`grid grid-cols-[30px,1fr] gap-1 items-center py-1 rounded-md px-2 hover:bg-black hover:text-yellow-500 text-black ${
                   pathname === sidebar.url && "bg-yellow-500"
                 }`}
               >
