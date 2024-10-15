@@ -18,10 +18,11 @@ import transactionRoutes from "./routes/transactionRoutes.js";
 import investmentRoutes from "./routes/investmentRoutes.js";
 import passwordRoute from "./routes/forgotPwdRoute.js";
 import fundRoutes from "./routes/fundRoutes.js";
-import uploadRoutes from "./routes/uploadImage.js";
-
-import cron from "node-cron";
-import { updateProfit } from "./controllers/fundController.js";
+import upload from "./routes/fileUpload.js";
+import statistics from "./routes/statistics.js";
+import review from "./routes/review.js";
+import ticket from "./routes/ticket.js";
+import { cron } from "./controllers/cron.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -42,15 +43,18 @@ app.use("/notification", notificationRoutes);
 app.use("/transaction", transactionRoutes);
 app.use("/fund", fundRoutes);
 app.use("/pwd", passwordRoute);
-app.use("/upload", uploadRoutes);
 app.use("/investment", investmentRoutes);
-app.use("/cron", updateProfit);
+app.use("/cron", cron);
+app.use("/upload", upload);
+app.use("/statistics", statistics);
+app.use("/review", review);
+app.use("/ticket", ticket);
 
 app.all("*", (req, res) => {
-	res.status(404);
-	if (req.accepts("html")) res.sendFile(path.join(__dirname, "views", "404.html"));
-	else if (req.accepts("json")) res.json({ message: "404 Not Found" });
-	else res.type("txt").send("404 Not Found");
+  res.status(404);
+  if (req.accepts("html")) res.sendFile(path.join(__dirname, "views", "404.html"));
+  else if (req.accepts("json")) res.json({ message: "404 Not Found" });
+  else res.type("txt").send("404 Not Found");
 });
 
 app.use(errorHandler);
@@ -60,11 +64,11 @@ app.use(errorHandler);
 // });
 
 mongoose.connection.once("open", () => {
-	console.log("Connected to MongoDB");
-	app.listen(PORT, () => console.log(`Server is running on ${PORT}`));
+  console.log("Connected to MongoDB");
+  app.listen(PORT, () => console.log(`Server is running on ${PORT}`));
 });
 
 mongoose.connection.on("error", (err) => {
-	console.log(err);
-	logEvents(`${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`, "mongoErrLog.log");
+  console.log(err);
+  logEvents(`${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`, "mongoErrLog.log");
 });

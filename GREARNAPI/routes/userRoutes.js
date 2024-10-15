@@ -5,12 +5,9 @@ import verifyJWT from "../middleware/verifyJWT.js";
 
 router.use(verifyJWT);
 
-router
-  .route("/")
-  .get(usersControllers.getAllUsers)
-  .post(usersControllers.createNewUser)
-  .patch(usersControllers.updateUser)
-  .delete(usersControllers.deleteUser);
+router.route("/").get(usersControllers.getAllUsers).post(usersControllers.postUser).patch(usersControllers.updateUser);
+
 router.route("/:userId").get(usersControllers.getUser);
+router.route("/:userId").delete(usersControllers.deleteUser);
 
 export default router;
