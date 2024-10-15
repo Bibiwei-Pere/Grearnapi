@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  // baseURL: "https://api-Grearns.onrender.com",
-  baseURL: "http://localhost:3500",
+  baseURL: "https://grearn-v1.vercel.app",
+  // baseURL: "http://localhost:3500",
   timeout: 15000,
 });
 
