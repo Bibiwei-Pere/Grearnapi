@@ -22,7 +22,9 @@ import upload from "./routes/fileUpload.js";
 import statistics from "./routes/statistics.js";
 import review from "./routes/review.js";
 import ticket from "./routes/ticket.js";
+import signal from "./routes/signal.js";
 import { cron } from "./controllers/cron.js";
+import crons from "node-cron";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -49,6 +51,7 @@ app.use("/upload", upload);
 app.use("/statistics", statistics);
 app.use("/review", review);
 app.use("/ticket", ticket);
+app.use("/signal", signal);
 
 app.all("*", (req, res) => {
   res.status(404);
@@ -59,8 +62,8 @@ app.all("*", (req, res) => {
 
 app.use(errorHandler);
 
-// cron.schedule("*/5 * * * * *", () => {
-// 	updateProfit();
+// crons.schedule("*/5 * * * * *", () => {
+//   cron();
 // });
 
 mongoose.connection.once("open", () => {

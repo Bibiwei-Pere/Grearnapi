@@ -65,9 +65,11 @@ export const updateUser = async (req, res) => {
     transactions,
     dob,
     country,
+    balance,
     avatar,
     bankDetails,
   } = req.body;
+  console.log(req.body);
   if (!userId) return res.status(400).json({ message: "ID field is required" });
 
   const user = await User.findById(userId).exec();
@@ -96,6 +98,7 @@ export const updateUser = async (req, res) => {
   if (transactions) user.transactions = transactions;
   if (avatar) user.avatar = avatar;
   if (bankDetails) user.bankDetails = bankDetails;
+  if (balance) user.balance = balance;
 
   const updateUser = await user.save();
 

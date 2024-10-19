@@ -6,7 +6,6 @@ import User from "../models/User.js";
 
 export const cron = async () => {
   await updateProfit();
-  await allStatistics();
   await updateFiles();
 };
 
@@ -100,91 +99,5 @@ const updateFiles = async () => {
     console.log("Avatar URLs updated successfully");
   } catch (error) {
     console.log("Error updating course URLs:", error);
-  }
-};
-
-const allStatistics = async () => {
-  try {
-    // Try to find the existing statistics document
-    let statistics = await Statistics.findOne();
-
-    if (!statistics) {
-      statistics = new Statistics();
-    } else {
-      const now = new Date();
-      const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-      // Update the total number of users
-      statistics.userStats.totalUsers = await User.countDocuments().exec();
-
-      // Update the number of active users (logged in today)
-      statistics.userStats.activeUsers = await User.countDocuments({
-        lastLogin: { $gte: startOfDay },
-        isActive: true,
-      }).exec();
-
-      // Update the number of inactive users (either not logged in today or marked as inactive)
-      statistics.userStats.inactiveUsers = await User.countDocuments({
-        $or: [{ lastLogin: { $lt: startOfDay } }, { isActive: false }],
-      }).exec();
-
-      // Count total users who deleted their account (for churn rate)
-      statistics.userStats.userChunRate = await User.countDocuments({ isDeleted: true }).exec();
-
-      // Fetch all users and calculate the course completion rate using `activeCourseList`
-      const users = await User.find().exec();
-      let totalCourses = 0;
-      let completedCourses = 0;
-
-      users.forEach((user) => {
-        if (user.activeCourseList.length) {
-          totalCourses += user.activeCourseList.length; // Total courses for all users
-          // Count courses where `duration` is 2 (considered completed)
-          completedCourses += user.activeCourseList.filter((course) => course.duration === 2).length;
-        }
-      });
-
-      // Calculate course completion rate as a percentage
-      statistics.userStats.courseCompleted =
-        totalCourses > 0
-          ? ((completedCourses / totalCourses) * 100).toFixed(2) // Convert to percentage
-          : 0;
-
-      // Calculate user enrollment rate
-      const usersEnrolledToday = await User.countDocuments({
-        createdAt: { $gte: startOfDay },
-      }).exec();
-
-      statistics.userStats.userEnrollRate =
-        statistics.userStats.totalUsers > 0
-          ? ((usersEnrolledToday / statistics.userStats.totalUsers) * 100).toFixed(2) // Convert to percentage
-          : 0;
-
-      // REVIEWS
-      // Update the total number of users
-      // const reviewCounts = await Promise.all([
-      //   Reviews.countDocuments({ star: 1 }).exec(),
-      //   Reviews.countDocuments({ star: 2 }).exec(),
-      //   Reviews.countDocuments({ star: 3 }).exec(),
-      //   Reviews.countDocuments({ star: 4 }).exec(),
-      //   Reviews.countDocuments({ star: 5 }).exec(),
-      // ]);
-
-      // // Update reviewStats in statistics
-      // statistics.reviewStats.total = reviewCounts.reduce((a, b) => a + b, 0); // Total reviews
-      // statistics.reviewStats.one = reviewCounts[0]; // Star 1 count
-      // statistics.reviewStats.two = reviewCounts[1]; // Star 2 count
-      // statistics.reviewStats.three = reviewCounts[2]; // Star 3 count
-      // statistics.reviewStats.four = reviewCounts[3]; // Star 4 count
-      // statistics.reviewStats.five = reviewCounts[4]; // Star 5 count
-    }
-
-    console.log(statistics);
-    await statistics.save(); // Save the updated statistics document
-
-    return statistics;
-  } catch (error) {
-    console.error("Error fetching statistics:", error);
-    throw new Error("Failed to fetch statistics.");
   }
 };

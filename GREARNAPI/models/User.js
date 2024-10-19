@@ -42,15 +42,12 @@ const userSchema = new mongoose.Schema(
     avatar: {
       name: {
         type: String,
-        default: "",
       },
       fileId: {
         type: String,
-        default: "",
       },
       url: {
         type: String,
-        default: "https://res.cloudinary.com/dxz2vce9i/image/upload/v1718620172/fg7kkhasl2z5fkwmcggc.jpg",
       },
     },
     lastLogin: { type: Date, default: Date.now },
